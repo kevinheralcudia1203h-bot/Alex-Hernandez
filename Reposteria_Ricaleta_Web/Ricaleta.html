@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repostería Ricaleta | El Rincón Dulce</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --rosa: #ffafcc; 
+            --azul: #1a5276; 
+            --crema: #fff9f0; 
+            --blanco: #ffffff; 
+            --verde: #27ae60; 
+            --rojo: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; text-decoration: none; list-style: none; }
+        html { font-size: 62.5%; scroll-behavior: smooth; }
+        body { background-color: var(--crema); padding-bottom: 15rem; }
+
+        /* --- HEADER --- */
+        header { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: var(--azul); padding: 1.5rem 5%; 
+            display: flex; align-items: center; justify-content: space-between; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .logo { font-size: 3.2rem; color: var(--rosa); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        .logo span { color: #fff; font-style: italic; }
+
+        .perfil-header { display: none; align-items: center; gap: 1rem; color: white; font-size: 1.6rem; font-weight: bold; }
+        .foto-perfil { width: 4.5rem; height: 4.5rem; border-radius: 50%; border: 2px solid var(--rosa); object-fit: cover; background: #fff; }
+
+        #menu-bars { font-size: 3rem; color: #fff; cursor: pointer; }
+        .navbar { position: fixed; top: 0; left: -100%; height: 100%; width: 30rem; background: var(--azul); z-index: 1001; transition: 0.5s; padding: 2rem; }
+        .navbar.active { left: 0; }
+        .navbar ul li { margin: 2rem 0; border-bottom: 1px solid var(--rosa); }
+        .navbar ul li a { font-size: 2rem; color: #fff; display: block; padding-bottom: 1rem; }
+
+        /* --- TARJETAS --- */
+        section { padding: 10rem 7% 2rem; text-align: center; }
+        .contenedor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 2.5rem; }
+        
+        .tarjeta { 
+            background: var(--blanco); padding: 2rem; border-radius: 2rem; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .tarjeta:hover { transform: scale(1.06); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+        .tarjeta img { width: 100%; height: 18rem; object-fit: cover; border-radius: 1.5rem; }
+        .tarjeta h3 { font-size: 1.8rem; margin: 1.5rem 0; color: var(--azul); }
+        
+        .controles-pedido { display: flex; justify-content: center; align-items: center; gap: 1.5rem; }
+        .btn-control { border: none; width: 4rem; height: 4rem; border-radius: 1rem; cursor: pointer; font-weight: bold; font-size: 2rem; color: white; display: flex; align-items: center; justify-content: center; }
+        .contador-num { font-size: 2.2rem; font-weight: bold; color: var(--azul); min-width: 2.5rem; transition: 0.3s; }
+        .rebote { transform: scale(1.4); color: var(--verde); }
+
+        .tabla-horarios { width: 100%; max-width: 600px; margin: 2rem auto; border-collapse: collapse; background: white; font-size: 1.6rem; border-radius: 1rem; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .tabla-horarios th { background: var(--azul); color: white; padding: 1.5rem; }
+        .tabla-horarios td { padding: 1.5rem; border: 1px solid #eee; text-align: center; }
+
+        .barra-total { position: fixed; bottom: 0; left: 0; right: 0; background: var(--azul); color: white; padding: 2rem; display: flex; justify-content: space-around; align-items: center; z-index: 999; border-top: 4px solid var(--rosa); font-size: 2rem; }
+        .btn-pago { background: var(--verde); color: white; padding: 1.5rem 3rem; font-size: 1.8rem; border-radius: 1rem; cursor: pointer; border: none; font-weight: bold; }
+
+        .login-card { max-width: 42rem; margin: 2rem auto; background: white; padding: 4rem; border-radius: 2.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .login-card input { width: 100%; padding: 1.5rem; margin: 1rem 0; border-radius: 1rem; border: 1px solid #ddd; font-size: 1.6rem; }
+        .captcha-box { background: #f0f0f0; padding: 1.5rem; margin: 1rem 0; font-weight: bold; letter-spacing: 8px; font-size: 2.4rem; color: var(--azul); border-radius: 1rem; cursor: pointer; text-align: center; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .ticket { background: white; padding: 3rem; border-radius: 2rem; width: 95%; max-width: 45rem; text-align: center; }
+        .metodos-iconos { font-size: 4rem; display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
+
+        .whatsapp { position: fixed; bottom: 14rem; right: 3rem; background: #25d366; color: white; width: 7rem; height: 7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body onload="generarCaptcha()">
+
+    <header>
+        <div id="menu-bars" class="fas fa-bars"></div>
+        <a href="#" class="logo">Repostería<span>Ricaleta</span></a>
+        <div class="perfil-header" id="perfilHeader">
+            <span id="headerNombre">Alex</span>
+            <img src="img/Perfil.png" class="foto-perfil" alt="Perfil">
+        </div>
+    </header>
+
+    <nav class="navbar" id="navbar">
+        <div id="close-menu" class="fas fa-times" style="color: white; font-size: 3.5rem; float: right; cursor: pointer;"></div>
+        <ul style="margin-top: 5rem;">
+            <li><a href="#anuncio">Conócenos</a></li>
+            <li><a href="#menu">Nuestro Menú</a></li>
+            <li><a href="#promos">Promociones</a></li>
+            <li><a href="#perfil">Mi Perfil</a></li>
+        </ul>
+    </nav>
+
+    <section id="anuncio" style="padding-top: 12rem;">
+        <h2 style="font-size: 3rem; margin-bottom: 2rem; color: var(--azul);">Conócenos Más</h2>
+        <video controls style="width: 100%; max-width: 800px; border-radius: 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+            <source src="Video/Comercial.mp4" type="video/mp4">
+        </video>
+    </section>
+
+    <section id="menu">
+        <h2 style="font-size: 3.5rem; color: var(--azul); margin-bottom: 3rem;">Nuestro Menú Gourmet</h2>
+        <div class="contenedor-grid">
+            <script>
+                const listaPostres = [
+                    "Pastel Fresa Real", "Helado de Coco", "Paleta Oreo Cream", "Dona Glaseada", "Cheesecake Frambuesa", 
+                    "Muffin de Nuez", "Gelatina Mosaico", "Pay de Limón", "Brownie Nutella", "Churros Azucarados",
+                    "Helado Vainilla Bean", "Paleta Fresa Natural", "Torta del Cielo", "Cupcake Red Velvet", "Flan Napolitano",
+                    "Galletas Chispas", "Crepa de Cajeta", "Helado Menta Choco", "Paleta Mango Chile", "Alfajor Maicena",
+                    "Milhojas Crema", "Pastel Fudge Choco", "Concha Vainilla", "Dona Doble Choco", "Mousse de Fresa",
+                    "Helado Nuez Entera", "Paleta Limón Real", "Tartaleta Frutal", "Macarons Mixtos", "Panqué de Elote"
+                ];
+                listaPostres.forEach((p) => {
+                    document.write(`
+                        <div class="tarjeta">
+                            <img src="img/${p}.jpg" alt="${p}">
+                            <h3>${p}</h3>
+                            <p class="precio">$45.00</p>
+                            <div class="controles-pedido">
+                                <button class="btn-control btn-restar" style="background:var(--rojo)" onclick="gestionarProducto('${p}', 45, -1)"><i class="fas fa-minus"></i></button>
+                                <span class="contador-num" id="cant-${p.replace(/\s/g, '')}">0</span>
+                                <button class="btn-control btn-agregar" style="background:var(--verde)" onclick="gestionarProducto('${p}', 45, 1)"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    `);
+                });
+            </script>
+        </div>
+    </section>
+
+    <section id="promos" style="background: var(--rosa);">
+        <h2 style="font-size: 3.5rem; color: white; margin-bottom: 3rem;">Promociones Ricaletas (Top 10)</h2>
+        <div class="contenedor-grid">
+            <script>
+                for(let i=0; i<10; i++){
+                    let p = listaPostres[i];
+                    let nombrePromo = p + " (PROMO)";
+                    document.write(`
+                        <div class="tarjeta">
+                            <img src="img/${p}.jpg" alt="${p}" style="height: 12rem;">
+                            <h3>${nombrePromo}</h3>
+                            <p class="precio">$24.90</p>
+                            <div class="controles-pedido">
+                                <button class="btn-control btn-restar" style="background:var(--rojo)" onclick="gestionarProducto('${nombrePromo}', 24.90, -1)"><i class="fas fa-minus"></i></button>
+                                <span class="contador-num" id="cant-${nombrePromo.replace(/\s/g, '').replace(/[()]/g, '')}">0</span>
+                                <button class="btn-control btn-agregar" style="background:var(--verde)" onclick="gestionarProducto('${nombrePromo}', 24.90, 1)"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    `);
+                }
+            </script>
+        </div>
+    </section>
+
+    <section id="horarios">
+        <h2 style="font-size: 3rem; color: var(--azul); margin-bottom: 2rem;">Horarios de Atención</h2>
+        <table class="tabla-horarios">
+            <thead><tr><th>Día</th><th>Apertura</th><th>Cierre</th></tr></thead>
+            <tbody>
+                <tr><td>Lunes - Viernes</td><td>09:00 AM</td><td>08:00 PM</td></tr>
+                <tr><td>Sábados</td><td>10:00 AM</td><td>06:00 PM</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div style="padding: 4rem 0; text-align: center;">
+        <audio controls><source src="Audio/Relax.mp3" type="audio/mpeg"></audio>
+    </div>
+
+    <section id="perfil" style="background: var(--rosa);">
+        <div class="login-card" id="cajaLogin">
+            <h2 style="font-size: 2.4rem; color: var(--azul); margin-bottom: 2rem;">Ingreso de Usuario</h2>
+            <input type="text" id="userIn" placeholder="Usuario">
+            <input type="password" placeholder="Contraseña">
+            <div class="captcha-box" id="captchaVisual" onclick="generarCaptcha()"></div>
+            <input type="text" id="capInput" placeholder="Escribe el código">
+            <button type="button" class="btn-pago" style="background: var(--azul); width: 100%; margin-top: 1rem;" onclick="hacerLogin()">ENTRAR</button>
+        </div>
+        <div id="loginOk" style="display:none; color:white; font-size:3rem; padding:5rem;">
+            <h2>¡Sesión Iniciada Alex! ✅</h2>
+        </div>
+    </section>
+
+    <div class="barra-total">
+        <span>🛒 <b id="cant">0</b> Artículos</span>
+        <span>Total: <b id="total">$0.00</b></span>
+        <input type="text" id="dirInput" placeholder="📍 Dirección de entrega..." style="padding:1rem; border-radius:0.5rem; border:none; width:20rem;">
+        <button class="btn-pago" onclick="abrirPago()">VER LISTA Y PAGAR</button>
+    </div>
+
+    <div class="modal" id="modalPago">
+        <div class="ticket">
+            <h2 style="color: var(--azul); font-size: 2.5rem;">🧁 Tu Pedido Ricaleto</h2>
+            <div id="lista-carrito" style="margin:2rem 0; text-align:left; font-size:1.6rem; max-height:20rem; overflow-y:auto;"></div>
+            <p style="font-size: 2.5rem;">Total: <b id="totalFinal" style="color: #d63384;">$0.00</b></p>
+            <div class="metodos-iconos">
+                <i class="fab fa-cc-mastercard" style="color: #eb001b;"></i>
+                <i class="fab fa-cc-visa" style="color: #1a1f71;"></i>
+                <i class="fas fa-money-bill-wave" style="color: #27ae60;"></i>
+            </div>
+            <p id="mostrarDir" style="margin-bottom:1.5rem; font-weight:bold;"></p>
+            <button class="btn-pago" style="width:100%; margin-bottom:1rem;" onclick="confirmarPedido()">CONFIRMAR PEDIDO</button>
+            <button class="btn-control" style="background: #999; width: 100%; height:auto; padding:1rem;" onclick="cerrarPago()">Seguir Comprando</button>
+        </div>
+    </div>
+
+    <a href="https://wa.me/529331065407" class="whatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        let carrito = {}; let captchaReal = "";
+
+        function generarCaptcha() {
+            captchaReal = Math.random().toString(36).substring(2,7).toUpperCase();
+            document.getElementById('captchaVisual').innerText = captchaReal;
+        }
+
+        function hacerLogin() {
+            let u = document.getElementById('userIn').value;
+            let c = document.getElementById('capInput').value.toUpperCase();
+            if(u !== "" && c === captchaReal) {
+                document.getElementById('cajaLogin').style.display = 'none';
+                document.getElementById('loginOk').style.display = 'block';
+                document.getElementById('perfilHeader').style.display = 'flex';
+                document.getElementById('headerNombre').innerText = u;
+                alert("Bienvenido " + u);
+            } else { alert("Captcha incorrecto"); generarCaptcha(); }
+        }
+
+        function gestionarProducto(nombre, precio, cambio) {
+            if (!carrito[nombre]) carrito[nombre] = { precio: precio, cantidad: 0 };
+            carrito[nombre].cantidad += cambio;
+            if (carrito[nombre].cantidad <= 0) {
+                carrito[nombre].cantidad = 0;
+                delete carrito[nombre];
+            }
+            let spanId = "cant-" + nombre.replace(/\s/g, '').replace(/[()]/g, '');
+            let span = document.getElementById(spanId);
+            if(span) {
+                span.innerText = carrito[nombre] ? carrito[nombre].cantidad : 0;
+                span.classList.add('rebote');
+                setTimeout(() => span.classList.remove('rebote'), 300);
+            }
+            actualizarTodo();
+        }
+
+        function actualizarTodo() {
+            let tD = 0; let tA = 0; let html = "";
+            for (let n in carrito) {
+                let item = carrito[n];
+                tD += item.precio * item.cantidad;
+                tA += item.cantidad;
+                html += `<p>• ${n} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}</p>`;
+            }
+            document.getElementById('total').innerText = "$" + tD.toFixed(2);
+            document.getElementById('cant').innerText = tA;
+            document.getElementById('totalFinal').innerText = "$" + tD.toFixed(2);
+            document.getElementById('lista-carrito').innerHTML = html || "Carrito vacío";
+        }
+
+        function abrirPago() { 
+            let dir = document.getElementById('dirInput').value;
+            if(dir === "" || document.getElementById('cant').innerText === "0") { alert("Ingresa dirección o agrega productos"); return; }
+            document.getElementById('mostrarDir').innerText = "📍 " + dir;
+            document.getElementById('modalPago').style.display='flex'; 
+        }
+        function cerrarPago() { document.getElementById('modalPago').style.display='none'; }
+
+        function confirmarPedido() {
+            alert("✅ ¡Pedido Recibido Alex! Reiniciando contadores.");
+            carrito = {};
+            document.querySelectorAll('.contador-num').forEach(s => s.innerText = "0");
+            document.getElementById('dirInput').value = "";
+            actualizarTodo();
+            cerrarPago();
+            generarCaptcha();
+        }
+        
+        $('#menu-bars').click(function(){ $('#navbar').addClass('active'); });
+        $('#close-menu').click(function(){ $('#navbar').removeClass('active'); });
+    </script>
+</body>
+</html>
+    
